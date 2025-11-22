@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type {
     Course,
@@ -9,15 +9,8 @@ import type {
     Notice,
     Faculty
 } from '../types';
-import {
-    courses as initialCourses,
-    exams as initialExams,
-    mockAssignments as initialAssignments,
-    mockEvents as initialEvents,
-    mockLostItems as initialLostItems,
-    mockNotices as initialNotices,
-    mockFaculty as initialFaculty
-} from '../data/mockData';
+import * as dbService from '../services/database.service';
+import { useAuth } from './AuthContext';
 
 interface DataContextType {
     courses: Course[];
@@ -27,81 +20,192 @@ interface DataContextType {
     lostItems: LostItem[];
     notices: Notice[];
     faculty: Faculty[];
+    isLoading: boolean;
+    refreshData: () => Promise<void>;
 
     // Actions
-    addCourse: (course: Course) => void;
-    updateCourse: (id: string, course: Course) => void;
-    deleteCourse: (id: string) => void;
+    addCourse: (course: Course) => Promise<void>;
+    updateCourse: (id: string, course: Course) => Promise<void>;
+    deleteCourse: (id: string) => Promise<void>;
 
-    addExam: (exam: Exam) => void;
-    updateExam: (id: string, exam: Exam) => void;
-    deleteExam: (id: string) => void;
+    addExam: (exam: Exam) => Promise<void>;
+    updateExam: (id: string, exam: Exam) => Promise<void>;
+    deleteExam: (id: string) => Promise<void>;
 
-    addAssignment: (assignment: Assignment) => void;
-    updateAssignment: (id: string, assignment: Assignment) => void;
-    deleteAssignment: (id: string) => void;
+    addAssignment: (assignment: Assignment) => Promise<void>;
+    updateAssignment: (id: string, assignment: Assignment) => Promise<void>;
+    deleteAssignment: (id: string) => Promise<void>;
 
-    addEvent: (event: Event) => void;
-    updateEvent: (id: string, event: Event) => void;
-    deleteEvent: (id: string) => void;
+    addEvent: (event: Event) => Promise<void>;
+    updateEvent: (id: string, event: Event) => Promise<void>;
+    deleteEvent: (id: string) => Promise<void>;
 
-    addLostItem: (item: LostItem) => void;
-    updateLostItem: (id: string, item: LostItem) => void;
-    deleteLostItem: (id: string) => void;
+    addLostItem: (item: LostItem) => Promise<void>;
+    updateLostItem: (id: string, item: LostItem) => Promise<void>;
+    deleteLostItem: (id: string) => Promise<void>;
 
-    addNotice: (notice: Notice) => void;
-    deleteNotice: (id: string) => void;
+    addNotice: (notice: Notice) => Promise<void>;
+    deleteNotice: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [courses, setCourses] = useState<Course[]>(initialCourses);
-    const [exams, setExams] = useState<Exam[]>(initialExams);
-    const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
-    const [events, setEvents] = useState<Event[]>(initialEvents);
-    const [lostItems, setLostItems] = useState<LostItem[]>(initialLostItems);
-    const [notices, setNotices] = useState<Notice[]>(initialNotices);
-    const [faculty] = useState<Faculty[]>(initialFaculty); // Faculty usually static for this scope
+    const { user } = useAuth();
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [exams, setExams] = useState<Exam[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [lostItems, setLostItems] = useState<LostItem[]>([]);
+    const [notices, setNotices] = useState<Notice[]>([]);
+    const [faculty, setFaculty] = useState<Faculty[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Get user's section for filtering
+    const userSection = user?.role === 'student' ? user.section : undefined;
+
+    // Fetch all data
+    const refreshData = async () => {
+        setIsLoading(true);
+        try {
+            const [
+                coursesData,
+                examsData,
+                assignmentsData,
+                eventsData,
+                lostItemsData,
+                noticesData,
+                facultyData
+            ] = await Promise.all([
+                dbService.fetchCourses(userSection),
+                dbService.fetchExams(userSection),
+                dbService.fetchAssignments(userSection, user?.id),
+                dbService.fetchEvents(),
+                dbService.fetchLostItems(),
+                dbService.fetchNotices(),
+                dbService.fetchFaculty()
+            ]);
+
+            setCourses(coursesData);
+            setExams(examsData);
+            setAssignments(assignmentsData);
+            setEvents(eventsData);
+            setLostItems(lostItemsData);
+            setNotices(noticesData);
+            setFaculty(facultyData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Initial data fetch
+    useEffect(() => {
+        if (user) {
+            refreshData();
+        }
+    }, [user]);
+
+    // Real-time subscriptions
+    useEffect(() => {
+        if (!user) return;
+
+        // Subscribe to notices changes
+        const noticesChannel = dbService.subscribeToNotices(() => {
+            dbService.fetchNotices().then(setNotices);
+        });
+
+        // Subscribe to lost items changes
+        const lostItemsChannel = dbService.subscribeToLostItems(() => {
+            dbService.fetchLostItems().then(setLostItems);
+        });
+
+        return () => {
+            noticesChannel.unsubscribe();
+            lostItemsChannel.unsubscribe();
+        };
+    }, [user]);
 
     // Course Actions
-    const addCourse = (course: Course) => setCourses([...courses, course]);
-    const updateCourse = (id: string, updatedCourse: Course) => {
-        setCourses(courses.map(c => c.id === id ? updatedCourse : c));
+    const addCourse = async (course: Course) => {
+        await dbService.createCourse(course);
+        await refreshData();
     };
-    const deleteCourse = (id: string) => setCourses(courses.filter(c => c.id !== id));
+    const updateCourse = async (id: string, course: Course) => {
+        await dbService.updateCourse(id, course);
+        await refreshData();
+    };
+    const deleteCourse = async (id: string) => {
+        await dbService.deleteCourse(id);
+        await refreshData();
+    };
 
     // Exam Actions
-    const addExam = (exam: Exam) => setExams([...exams, exam]);
-    const updateExam = (id: string, updatedExam: Exam) => {
-        setExams(exams.map(e => e.id === id ? updatedExam : e));
+    const addExam = async (exam: Exam) => {
+        await dbService.createExam({ ...exam, section: userSection || 'A' });
+        await refreshData();
     };
-    const deleteExam = (id: string) => setExams(exams.filter(e => e.id !== id));
+    const updateExam = async (id: string, exam: Exam) => {
+        await dbService.updateExam(id, exam);
+        await refreshData();
+    };
+    const deleteExam = async (id: string) => {
+        await dbService.deleteExam(id);
+        await refreshData();
+    };
 
     // Assignment Actions
-    const addAssignment = (assignment: Assignment) => setAssignments([...assignments, assignment]);
-    const updateAssignment = (id: string, updatedAssignment: Assignment) => {
-        setAssignments(assignments.map(a => a.id === id ? updatedAssignment : a));
+    const addAssignment = async (assignment: Assignment) => {
+        await dbService.createAssignment({ ...assignment, section: userSection || 'A' });
+        await refreshData();
     };
-    const deleteAssignment = (id: string) => setAssignments(assignments.filter(a => a.id !== id));
+    const updateAssignment = async (id: string, assignment: Assignment) => {
+        await dbService.updateAssignment(id, assignment);
+        await refreshData();
+    };
+    const deleteAssignment = async (id: string) => {
+        await dbService.deleteAssignment(id);
+        await refreshData();
+    };
 
     // Event Actions
-    const addEvent = (event: Event) => setEvents([...events, event]);
-    const updateEvent = (id: string, updatedEvent: Event) => {
-        setEvents(events.map(e => e.id === id ? updatedEvent : e));
+    const addEvent = async (event: Event) => {
+        await dbService.createEvent(event);
+        await refreshData();
     };
-    const deleteEvent = (id: string) => setEvents(events.filter(e => e.id !== id));
+    const updateEvent = async (id: string, event: Event) => {
+        await dbService.updateEvent(id, event);
+        await refreshData();
+    };
+    const deleteEvent = async (id: string) => {
+        await dbService.deleteEvent(id);
+        await refreshData();
+    };
 
     // Lost Item Actions
-    const addLostItem = (item: LostItem) => setLostItems([...lostItems, item]);
-    const updateLostItem = (id: string, updatedItem: LostItem) => {
-        setLostItems(lostItems.map(i => i.id === id ? updatedItem : i));
+    const addLostItem = async (item: LostItem) => {
+        await dbService.createLostItem({ ...item, postedBy: user?.id });
+        await refreshData();
     };
-    const deleteLostItem = (id: string) => setLostItems(lostItems.filter(i => i.id !== id));
+    const updateLostItem = async (id: string, item: LostItem) => {
+        await dbService.updateLostItem(id, item);
+        await refreshData();
+    };
+    const deleteLostItem = async (id: string) => {
+        await dbService.deleteLostItem(id);
+        await refreshData();
+    };
 
     // Notice Actions
-    const addNotice = (notice: Notice) => setNotices([notice, ...notices]);
-    const deleteNotice = (id: string) => setNotices(notices.filter(n => n.id !== id));
+    const addNotice = async (notice: Notice) => {
+        await dbService.createNotice(notice);
+        await refreshData();
+    };
+    const deleteNotice = async (id: string) => {
+        await dbService.deleteNotice(id);
+        await refreshData();
+    };
 
     return (
         <DataContext.Provider value={{
@@ -112,6 +216,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             lostItems,
             notices,
             faculty,
+            isLoading,
+            refreshData,
             addCourse,
             updateCourse,
             deleteCourse,

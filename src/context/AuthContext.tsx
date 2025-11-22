@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '../types';
-import { currentUser, mockAdmin } from '../data/mockData';
+import * as authService from '../services/auth.service';
 
 interface AuthContextType {
     user: User | null;
@@ -18,46 +18,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check if user is already logged in (mock persistence)
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        // Check if user is already logged in
+        const currentUser = authService.getCurrentUser();
+        if (currentUser) {
+            setUser(currentUser);
             setIsAuthenticated(true);
         }
         setIsLoading(false);
     }, []);
 
     const login = async (id: string, password: string, role: 'student' | 'admin', section?: string): Promise<boolean> => {
-        // Mock API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        let result;
 
         if (role === 'admin') {
-            if (id === mockAdmin.email && password === mockAdmin.password) {
-                setUser(mockAdmin);
-                setIsAuthenticated(true);
-                localStorage.setItem('user', JSON.stringify(mockAdmin));
-                return true;
-            }
+            // Admin login with email
+            result = await authService.loginAdmin(id, password);
         } else {
-            // Student login
-            if (
-                id === currentUser.rollNo &&
-                section?.toUpperCase() === currentUser.section &&
-                password === currentUser.password
-            ) {
-                setUser(currentUser);
-                setIsAuthenticated(true);
-                localStorage.setItem('user', JSON.stringify(currentUser));
-                return true;
+            // Student login with roll number and section
+            if (!section) {
+                return false;
             }
+            result = await authService.loginStudent(id, section, password);
         }
+
+        if (result.success && result.user) {
+            setUser(result.user);
+            setIsAuthenticated(true);
+            return true;
+        }
+
         return false;
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await authService.logout();
         setUser(null);
         setIsAuthenticated(false);
-        localStorage.removeItem('user');
     };
 
     if (isLoading) {
