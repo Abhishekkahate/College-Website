@@ -40,19 +40,6 @@
   --color-surface-900: #0f172a;
   --color-surface-950: #020617;
 
-  /* Dark Mode Colors */
-  --color-dark-surface-50: #0f172a;
-  --color-dark-surface-100: #1e293b;
-  --color-dark-surface-200: #334155;
-  --color-dark-surface-300: #475569;
-  --color-dark-surface-400: #64748b;
-  --color-dark-surface-500: #94a3b8;
-  --color-dark-surface-600: #cbd5e1;
-  --color-dark-surface-700: #e2e8f0;
-  --color-dark-surface-800: #f1f5f9;
-  --color-dark-surface-900: #f8fafc;
-  --color-dark-surface-950: #ffffff;
-
   --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-neon: 0 0 20px rgba(20, 184, 166, 0.4);
   --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
@@ -63,23 +50,49 @@
   --animate-pulse-glow: pulseGlow 2s infinite;
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
   }
 
   @keyframes slideUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.2); }
-    50% { box-shadow: 0 0 25px rgba(20, 184, 166, 0.5); }
+
+    0%,
+    100% {
+      box-shadow: 0 0 15px rgba(20, 184, 166, 0.2);
+    }
+
+    50% {
+      box-shadow: 0 0 25px rgba(20, 184, 166, 0.5);
+    }
   }
 }
 
@@ -93,21 +106,12 @@
 
   body {
     @apply bg-surface-50 text-surface-900 transition-colors duration-300;
-    background-image: 
+    background-image:
       radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.1) 0px, transparent 50%),
       radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.1) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.1) 0px, transparent 50%),
       radial-gradient(at 0% 100%, rgba(217, 70, 239, 0.1) 0px, transparent 50%);
     background-attachment: fixed;
-  }
-
-  .dark body {
-    @apply bg-surface-950 text-surface-50;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(217, 70, 239, 0.15) 0px, transparent 50%);
   }
 }
 
@@ -116,16 +120,8 @@
     @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-card rounded-2xl;
   }
 
-  .dark .glass-card {
-    @apply bg-surface-900/60 border-white/10 shadow-glass;
-  }
-
   .glass-panel {
     @apply bg-white/40 backdrop-blur-md border border-white/30 shadow-sm rounded-xl;
-  }
-
-  .dark .glass-panel {
-    @apply bg-surface-800/40 border-white/5;
   }
 
   .neon-text {
@@ -134,9 +130,5 @@
 
   .card-hover {
     @apply transition-all duration-300 hover:translate-y-[-4px] hover:shadow-lg hover:border-primary-300/50;
-  }
-  
-  .dark .card-hover {
-    @apply hover:border-primary-500/30 hover:shadow-neon;
   }
 }

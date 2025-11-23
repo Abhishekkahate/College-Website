@@ -1,9 +1,9 @@
-import { Bell, Search, Moon, Sun, Menu } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import { Bell, Search, Menu } from 'lucide-react';
+
 import { motion } from 'framer-motion';
 
 const Header = () => {
-    const { theme, toggleTheme } = useTheme();
+
 
     return (
         <motion.header
@@ -27,12 +27,7 @@ const Header = () => {
             </div>
 
             <div className="flex items-center gap-3">
-                <button
-                    onClick={toggleTheme}
-                    className="rounded-xl p-2.5 text-surface-500 hover:bg-surface-100 hover:text-primary-600 transition-all dark:text-surface-400 dark:hover:bg-white/10 dark:hover:text-primary-400"
-                >
-                    {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                </button>
+
 
                 <button className="relative rounded-xl p-2.5 text-surface-500 hover:bg-surface-100 hover:text-primary-600 transition-all dark:text-surface-400 dark:hover:bg-white/10 dark:hover:text-primary-400">
                     <Bell className="h-5 w-5" />
