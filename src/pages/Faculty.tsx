@@ -10,46 +10,46 @@ const Faculty = () => {
         <PageTransition>
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Faculty Directory</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Contact information for your professors</p>
+                    <h1 className="text-2xl font-bold text-surface-900">Faculty Directory</h1>
+                    <p className="text-surface-500">Contact information for your professors</p>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {faculty.map((faculty, index) => (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                             key={faculty.id}
-                            className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-surface-900 dark:border dark:border-white/10"
+                            className="card-clean p-6 bg-white hover:border-primary-300 transition-all group"
                         >
-                            <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-4 mb-6">
                                 <img
                                     src={faculty.image}
                                     alt={faculty.name}
-                                    className="h-16 w-16 rounded-full object-cover border-2 border-primary-100 dark:border-primary-900"
+                                    className="h-16 w-16 rounded-full object-cover border-2 border-surface-100 group-hover:border-primary-200 transition-colors"
                                 />
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{faculty.name}</h3>
-                                    <p className="text-sm text-primary-600 dark:text-primary-400 font-medium">{faculty.department}</p>
+                                    <h3 className="text-lg font-bold text-surface-900 group-hover:text-primary-700 transition-colors">{faculty.name}</h3>
+                                    <p className="text-sm text-primary-600 font-medium">{faculty.department}</p>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 dark:bg-surface-800 text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-surface-600">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-50 text-surface-500 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
                                         <Mail className="h-4 w-4" />
                                     </div>
-                                    <span>{faculty.email}</span>
+                                    <span className="truncate">{faculty.email}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 dark:bg-surface-800 text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-surface-600">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-50 text-surface-500 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
                                         <Phone className="h-4 w-4" />
                                     </div>
                                     <span>{faculty.phone}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 dark:bg-surface-800 text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-surface-600">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-50 text-surface-500 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
                                         <MapPin className="h-4 w-4" />
                                     </div>
                                     <span>{faculty.office}</span>

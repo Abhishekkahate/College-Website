@@ -61,23 +61,23 @@ const Notes = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold neon-text">Study Notes</h1>
-                    <p className="text-surface-500 dark:text-surface-400">Access and share study materials</p>
+                    <h1 className="text-2xl font-bold text-surface-900">Study Notes</h1>
+                    <p className="text-surface-500">Access and share study materials</p>
                 </div>
                 <button
                     onClick={() => setIsUploadModalOpen(true)}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30"
+                    className="flex items-center justify-center gap-2 rounded-lg bg-primary-900 px-6 py-2.5 text-white font-medium hover:bg-primary-800 transition-all shadow-sm"
                 >
-                    <Upload className="h-5 w-5" />
+                    <Upload className="h-4 w-4" />
                     Upload Note
                 </button>
             </div>
 
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400 overflow-x-auto pb-2">
+            <div className="flex items-center gap-2 text-sm text-surface-500 overflow-x-auto pb-2">
                 <button
                     onClick={() => { setSelectedSubject(null); setSelectedUnit(null); }}
-                    className={clsx("hover:text-primary-600 transition-colors", !selectedSubject && "font-bold text-primary-600 dark:text-primary-400")}
+                    className={clsx("hover:text-primary-700 transition-colors", !selectedSubject && "font-bold text-primary-700")}
                 >
                     All Subjects
                 </button>
@@ -86,7 +86,7 @@ const Notes = () => {
                         <ChevronRight className="h-4 w-4" />
                         <button
                             onClick={() => setSelectedUnit(null)}
-                            className={clsx("hover:text-primary-600 transition-colors", !selectedUnit && "font-bold text-primary-600 dark:text-primary-400")}
+                            className={clsx("hover:text-primary-700 transition-colors", !selectedUnit && "font-bold text-primary-700")}
                         >
                             {selectedSubject}
                         </button>
@@ -95,7 +95,7 @@ const Notes = () => {
                 {selectedUnit && (
                     <>
                         <ChevronRight className="h-4 w-4" />
-                        <span className="font-bold text-primary-600 dark:text-primary-400">{selectedUnit}</span>
+                        <span className="font-bold text-primary-700">{selectedUnit}</span>
                     </>
                 )}
             </div>
@@ -116,15 +116,15 @@ const Notes = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.05 }}
                                 onClick={() => setSelectedSubject(subject)}
-                                className="glass-card p-6 cursor-pointer card-hover group"
+                                className="card-clean p-6 cursor-pointer hover:border-primary-300 transition-all group bg-white"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30 group-hover:scale-110 transition-transform">
-                                        <Folder className="h-7 w-7" />
+                                    <div className="h-12 w-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                                        <Folder className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{subject}</h3>
-                                        <p className="text-sm text-surface-500 dark:text-surface-400">{notes.filter(n => n.courseName === subject).length} Files</p>
+                                        <h3 className="text-lg font-bold text-surface-900 group-hover:text-primary-700 transition-colors">{subject}</h3>
+                                        <p className="text-sm text-surface-500">{notes.filter(n => n.courseName === subject).length} Files</p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -145,15 +145,15 @@ const Notes = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.05 }}
                                 onClick={() => setSelectedUnit(unit)}
-                                className="glass-card p-6 cursor-pointer card-hover group"
+                                className="card-clean p-6 cursor-pointer hover:border-primary-300 transition-all group bg-white"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-xl bg-accent-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400 flex items-center justify-center group-hover:bg-accent-600 group-hover:text-white transition-colors">
+                                    <div className="h-12 w-12 rounded-xl bg-accent-50 text-accent-600 flex items-center justify-center group-hover:bg-accent-600 group-hover:text-white transition-colors">
                                         <Folder className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-surface-900 dark:text-white">{unit}</h3>
-                                        <p className="text-sm text-surface-500 dark:text-surface-400">{notes.filter(n => n.courseName === selectedSubject && n.unit === unit).length} Files</p>
+                                        <h3 className="text-lg font-bold text-surface-900">{unit}</h3>
+                                        <p className="text-sm text-surface-500">{notes.filter(n => n.courseName === selectedSubject && n.unit === unit).length} Files</p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -174,26 +174,26 @@ const Notes = () => {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="glass-card p-4 flex items-center justify-between group hover:border-primary-500/30"
+                                    className="card-clean p-4 flex items-center justify-between group hover:border-primary-300 bg-white"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400 flex items-center justify-center">
+                                        <div className="h-10 w-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center border border-red-100">
                                             <FileText className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-surface-900 dark:text-white group-hover:text-primary-600 transition-colors">{note.title}</h3>
-                                            <p className="text-xs text-surface-500 dark:text-surface-400">
+                                            <h3 className="font-bold text-surface-900 group-hover:text-primary-700 transition-colors">{note.title}</h3>
+                                            <p className="text-xs text-surface-500">
                                                 Uploaded by {note.author} • {note.date} • {note.size}
                                             </p>
                                         </div>
                                     </div>
-                                    <button className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-white/10 text-surface-500 dark:text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                                    <button className="p-2 rounded-lg hover:bg-surface-100 text-surface-500 hover:text-primary-700 transition-colors">
                                         <Download className="h-5 w-5" />
                                     </button>
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+                            <div className="text-center py-12 text-surface-500">
                                 <FileText className="h-12 w-12 mx-auto mb-3 opacity-20" />
                                 <p>No notes found in this unit.</p>
                             </div>
@@ -205,36 +205,37 @@ const Notes = () => {
             {/* Upload Modal */}
             <AnimatePresence>
                 {isUploadModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="w-full max-w-md bg-white dark:bg-surface-900 rounded-2xl shadow-2xl p-6 border border-surface-200 dark:border-white/10"
+                            className="w-full max-w-md bg-white rounded-xl shadow-xl p-6 border border-surface-200"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-surface-900 dark:text-white">Upload Note</h2>
-                                <button onClick={() => setIsUploadModalOpen(false)} className="text-surface-500 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white">
+                                <h2 className="text-xl font-bold text-surface-900">Upload Note</h2>
+                                <button onClick={() => setIsUploadModalOpen(false)} className="text-surface-400 hover:text-surface-900 transition-colors">
                                     <X className="h-5 w-5" />
                                 </button>
                             </div>
 
                             <form onSubmit={handleUpload} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Title</label>
+                                    <label className="block text-sm font-medium text-surface-700 mb-1">Title</label>
                                     <input
                                         type="text"
                                         required
-                                        className="w-full rounded-xl border border-surface-200 bg-surface-50 px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:bg-surface-800 dark:border-white/10 dark:text-white"
+                                        className="input-clean w-full"
                                         value={newNote.title}
                                         onChange={e => setNewNote({ ...newNote, title: e.target.value })}
+                                        placeholder="e.g. Chapter 1 Summary"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Subject</label>
+                                    <label className="block text-sm font-medium text-surface-700 mb-1">Subject</label>
                                     <select
                                         required
-                                        className="w-full rounded-xl border border-surface-200 bg-surface-50 px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:bg-surface-800 dark:border-white/10 dark:text-white"
+                                        className="input-clean w-full"
                                         value={newNote.courseId}
                                         onChange={e => setNewNote({ ...newNote, courseId: e.target.value })}
                                     >
@@ -245,10 +246,10 @@ const Notes = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Unit</label>
+                                    <label className="block text-sm font-medium text-surface-700 mb-1">Unit</label>
                                     <select
                                         required
-                                        className="w-full rounded-xl border border-surface-200 bg-surface-50 px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:bg-surface-800 dark:border-white/10 dark:text-white"
+                                        className="input-clean w-full"
                                         value={newNote.unit}
                                         onChange={e => setNewNote({ ...newNote, unit: e.target.value })}
                                     >
@@ -259,15 +260,15 @@ const Notes = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">File</label>
-                                    <div className="border-2 border-dashed border-surface-300 dark:border-white/20 rounded-xl p-6 text-center hover:border-primary-500 transition-colors cursor-pointer">
+                                    <label className="block text-sm font-medium text-surface-700 mb-1">File</label>
+                                    <div className="border-2 border-dashed border-surface-200 rounded-xl p-6 text-center hover:border-primary-500 transition-colors cursor-pointer bg-surface-50/50">
                                         <Upload className="h-8 w-8 mx-auto text-surface-400 mb-2" />
                                         <p className="text-sm text-surface-500">Click to upload PDF</p>
                                     </div>
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full rounded-xl bg-primary-600 py-3 text-white font-bold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/30"
+                                    className="w-full rounded-lg bg-primary-900 py-2.5 text-white font-bold hover:bg-primary-800 transition-colors shadow-sm"
                                 >
                                     Upload Note
                                 </button>

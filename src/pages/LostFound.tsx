@@ -1,3 +1,4 @@
+
 import { useData } from '../context/DataContext';
 import { MapPin, Phone, Calendar } from 'lucide-react';
 import clsx from 'clsx';
@@ -10,28 +11,28 @@ const LostFound = () => {
         <PageTransition>
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Lost & Found</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Report and find lost items on campus</p>
+                    <h1 className="text-2xl font-bold text-surface-900">Lost & Found</h1>
+                    <p className="text-surface-500">Report and find lost items on campus</p>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {lostItems.map((item, index) => (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                             key={item.id}
-                            className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:bg-surface-900 dark:border dark:border-white/10"
+                            className="card-clean group overflow-hidden bg-white hover:border-primary-300 transition-all"
                         >
                             <div className="relative h-48 w-full overflow-hidden">
                                 <img
                                     src={item.image}
                                     alt={item.title}
-                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                                 <div
                                     className={clsx(
-                                        'absolute top-4 right-4 rounded-lg px-3 py-1 text-xs font-bold backdrop-blur-sm',
+                                        'absolute top-4 right-4 rounded-lg px-3 py-1 text-xs font-bold backdrop-blur-sm shadow-sm',
                                         item.status === 'Lost'
                                             ? 'bg-red-500/90 text-white'
                                             : 'bg-green-500/90 text-white'
@@ -42,25 +43,25 @@ const LostFound = () => {
                             </div>
 
                             <div className="p-5">
-                                <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">{item.title}</h3>
-                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
+                                <h3 className="mb-2 text-lg font-bold text-surface-900 group-hover:text-primary-700 transition-colors">{item.title}</h3>
+                                <p className="mb-4 text-sm text-surface-500 line-clamp-2">{item.description}</p>
 
-                                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4 text-primary-500" />
+                                <div className="space-y-2.5 text-sm text-surface-600">
+                                    <div className="flex items-center gap-2.5">
+                                        <MapPin className="h-4 w-4 text-primary-600" />
                                         <span>{item.location}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Calendar className="h-4 w-4 text-primary-500" />
+                                    <div className="flex items-center gap-2.5">
+                                        <Calendar className="h-4 w-4 text-primary-600" />
                                         <span>{new Date(item.date).toLocaleDateString()}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Phone className="h-4 w-4 text-primary-500" />
+                                    <div className="flex items-center gap-2.5">
+                                        <Phone className="h-4 w-4 text-primary-600" />
                                         <span>{item.contact}</span>
                                     </div>
                                 </div>
 
-                                <button className="mt-4 w-full rounded-xl bg-primary-50 px-4 py-2 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-100 dark:bg-primary-900/20 dark:text-primary-400 dark:hover:bg-primary-900/30">
+                                <button className="mt-5 w-full rounded-lg bg-surface-50 px-4 py-2.5 text-sm font-bold text-surface-700 transition-colors hover:bg-primary-50 hover:text-primary-700 border border-surface-200 hover:border-primary-200">
                                     Contact
                                 </button>
                             </div>

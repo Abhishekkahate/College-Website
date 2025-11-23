@@ -8,13 +8,19 @@ import {
     LogOut,
     User,
     Settings,
-    HelpCircle
+    HelpCircle,
+    X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
-const Sidebar = () => {
+interface SidebarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
 
@@ -36,57 +42,41 @@ const Sidebar = () => {
         { icon: HelpCircle, label: 'Help & Support', path: '/help' },
     ];
 
-    return (
-        <motion.aside
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="fixed left-4 top-4 bottom-4 w-64 glass-card flex flex-col z-50 overflow-hidden"
-        >
-            <div className="p-6 flex items-center gap-3 border-b border-white/20 dark:border-white/10">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/30">
-                    <GraduationCap className="h-6 w-6 text-white" />
+    const sidebarContent = (
+        <div className="flex flex-col h-full bg-white border-r border-surface-200">
+            <div className="p-6 flex items-center justify-between border-b border-surface-100">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-primary-900 flex items-center justify-center shadow-sm">
+                        <GraduationCap className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-surface-900">CampusSync</h1>
+                        <p className="text-xs text-surface-500">Student Portal</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-xl font-bold neon-text">CampusSync</h1>
-                    <p className="text-xs text-surface-500 dark:text-surface-400">Student Portal</p>
-                </div>
+                <button onClick={onClose} className="lg:hidden p-2 text-surface-500 hover:bg-surface-100 rounded-lg">
+                    <X className="h-5 w-5" />
+                </button>
             </div>
 
-            <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
                 <div className="mb-2 px-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">Menu</div>
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={() => window.innerWidth < 1024 && onClose()}
                         className={({ isActive }) =>
                             clsx(
-                                'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden',
+                                'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group',
                                 isActive
-                                    ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 font-medium shadow-sm'
-                                    : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-white/5 hover:text-primary-600 dark:hover:text-primary-400'
+                                    ? 'bg-primary-50 text-primary-900 font-medium'
+                                    : 'text-surface-600 hover:bg-surface-50 hover:text-surface-900'
                             )
                         }
                     >
-                        {({ isActive }) => (
-                            <>
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="activeNav"
-                                        className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-accent-500/5 rounded-xl"
-                                        initial={false}
-                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    />
-                                )}
-                                <item.icon className={clsx("h-5 w-5 relative z-10 transition-colors", isActive ? "text-primary-600 dark:text-primary-400" : "group-hover:text-primary-600 dark:group-hover:text-primary-400")} />
-                                <span className="relative z-10">{item.label}</span>
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="activeGlow"
-                                        className="absolute right-2 h-2 w-2 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(20,184,166,0.6)]"
-                                    />
-                                )}
-                            </>
-                        )}
+                        <item.icon className={clsx("h-5 w-5 transition-colors", "text-current")} />
+                        <span>{item.label}</span>
                     </NavLink>
                 ))}
 
@@ -95,43 +85,75 @@ const Sidebar = () => {
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={() => window.innerWidth < 1024 && onClose()}
                         className={({ isActive }) =>
                             clsx(
-                                'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group',
+                                'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group',
                                 isActive
-                                    ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 font-medium'
-                                    : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-white/5 hover:text-primary-600 dark:hover:text-primary-400'
+                                    ? 'bg-primary-50 text-primary-900 font-medium'
+                                    : 'text-surface-600 hover:bg-surface-50 hover:text-surface-900'
                             )
                         }
                     >
-                        <item.icon className="h-5 w-5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
+                        <item.icon className="h-5 w-5 text-current" />
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-white/20 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-white/20">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary-400 to-accent-400 p-[2px]">
-                        <div className="h-full w-full rounded-full bg-white dark:bg-surface-900 flex items-center justify-center overflow-hidden">
-                            <User className="h-5 w-5 text-primary-500" />
-                        </div>
+            <div className="p-4 border-t border-surface-100 bg-surface-50/50">
+                <div className="flex items-center gap-3 mb-4 p-2 rounded-lg">
+                    <div className="h-10 w-10 rounded-full bg-surface-200 flex items-center justify-center overflow-hidden">
+                        <User className="h-5 w-5 text-surface-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate">{user?.name || 'Student'}</p>
-                        <p className="text-xs text-surface-500 dark:text-surface-400 truncate">{user?.email || 'student@college.edu'}</p>
+                        <p className="text-sm font-medium text-surface-900 truncate">{user?.name || 'Student'}</p>
+                        <p className="text-xs text-surface-500 truncate">{user?.email || 'student@college.edu'}</p>
                     </div>
                 </div>
 
                 <button
                     onClick={handleLogout}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-surface-100 px-4 py-2.5 text-sm font-medium text-surface-600 transition-all hover:bg-red-50 hover:text-red-600 dark:bg-white/5 dark:text-surface-300 dark:hover:bg-red-900/20 dark:hover:text-red-400 shadow-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-white border border-surface-200 px-4 py-2.5 text-sm font-medium text-surface-600 transition-all hover:bg-red-50 hover:text-red-600 hover:border-red-100"
                 >
                     <LogOut className="h-4 w-4" />
                     Sign Out
                 </button>
             </div>
-        </motion.aside>
+        </div>
+    );
+
+    return (
+        <>
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-72 z-50">
+                {sidebarContent}
+            </aside>
+
+            {/* Mobile Sidebar Overlay */}
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={onClose}
+                            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 lg:hidden"
+                        />
+                        <motion.aside
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "-100%" }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed left-0 top-0 bottom-0 w-72 z-50 lg:hidden shadow-2xl"
+                        >
+                            {sidebarContent}
+                        </motion.aside>
+                    </>
+                )}
+            </AnimatePresence>
+        </>
     );
 };
 

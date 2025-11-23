@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FileText, Calendar, CheckCircle, AlertCircle, Upload } from 'lucide-react';
+import { FileText, Calendar, CheckCircle, AlertCircle, Upload, Clock } from 'lucide-react';
 import clsx from 'clsx';
 
 const Assignments = () => {
@@ -45,19 +45,19 @@ const Assignments = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'Submitted': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-            case 'Pending': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
-            case 'Overdue': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-            default: return 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-400';
+            case 'Submitted': return 'bg-green-50 text-green-700 border-green-200';
+            case 'Pending': return 'bg-orange-50 text-orange-700 border-orange-200';
+            case 'Overdue': return 'bg-red-50 text-red-700 border-red-200';
+            default: return 'bg-surface-100 text-surface-700 border-surface-200';
         }
     };
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case 'High': return 'text-red-500';
-            case 'Medium': return 'text-orange-500';
-            case 'Low': return 'text-blue-500';
-            default: return 'text-gray-500';
+            case 'High': return 'text-red-600 bg-red-50 border-red-100';
+            case 'Medium': return 'text-orange-600 bg-orange-50 border-orange-100';
+            case 'Low': return 'text-blue-600 bg-blue-50 border-blue-100';
+            default: return 'text-surface-600 bg-surface-50 border-surface-100';
         }
     };
 
@@ -65,76 +65,86 @@ const Assignments = () => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
+            className="space-y-8"
         >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold neon-text">Assignments</h1>
-                    <p className="text-surface-500 dark:text-surface-400">Track and submit your coursework</p>
+                    <h1 className="text-2xl font-bold text-surface-900">Assignments</h1>
+                    <p className="text-surface-500">Track and submit your coursework</p>
                 </div>
                 <div className="flex gap-3">
-                    <div className="glass-panel px-4 py-2 flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
-                        <span className="text-sm font-medium text-surface-600 dark:text-surface-300">3 Pending</span>
+                    <div className="bg-white border border-surface-200 rounded-lg px-4 py-2 flex items-center gap-2 shadow-sm">
+                        <div className="h-2 w-2 rounded-full bg-orange-500" />
+                        <span className="text-sm font-medium text-surface-600">3 Pending</span>
                     </div>
-                    <div className="glass-panel px-4 py-2 flex items-center gap-2">
+                    <div className="bg-white border border-surface-200 rounded-lg px-4 py-2 flex items-center gap-2 shadow-sm">
                         <div className="h-2 w-2 rounded-full bg-green-500" />
-                        <span className="text-sm font-medium text-surface-600 dark:text-surface-300">1 Submitted</span>
+                        <span className="text-sm font-medium text-surface-600">1 Submitted</span>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-4">
                 {assignments.map((assignment, index) => (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        transition={{ delay: index * 0.05 }}
                         key={assignment.id}
-                        className="glass-card p-6 card-hover group relative overflow-hidden"
+                        className="card-clean p-6 hover:border-primary-300 transition-all group"
                     >
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <FileText className="h-24 w-24 transform rotate-12" />
-                        </div>
+                        <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                            <div className="flex-1">
+                                <div className="flex flex-wrap items-center gap-3 mb-3">
+                                    <span className={clsx(
+                                        "px-2.5 py-0.5 rounded-full text-xs font-medium border",
+                                        getStatusColor(assignment.status)
+                                    )}>
+                                        {assignment.status}
+                                    </span>
+                                    <span className={clsx(
+                                        "px-2.5 py-0.5 rounded-full text-xs font-medium border flex items-center gap-1",
+                                        getPriorityColor(assignment.priority)
+                                    )}>
+                                        <AlertCircle className="h-3 w-3" />
+                                        {assignment.priority} Priority
+                                    </span>
+                                    <span className="text-xs font-medium text-surface-400 flex items-center gap-1">
+                                        <FileText className="h-3 w-3" />
+                                        {assignment.course}
+                                    </span>
+                                </div>
 
-                        <div className="relative z-10">
-                            <div className="flex justify-between items-start mb-4">
-                                <span className={clsx(
-                                    "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
-                                    getStatusColor(assignment.status)
-                                )}>
-                                    {assignment.status}
-                                </span>
-                                <div className="flex items-center gap-1 text-xs font-medium">
-                                    <AlertCircle className={clsx("h-3 w-3", getPriorityColor(assignment.priority))} />
-                                    <span className={clsx(getPriorityColor(assignment.priority))}>{assignment.priority} Priority</span>
+                                <h3 className="text-lg font-bold text-surface-900 mb-2 group-hover:text-primary-700 transition-colors">
+                                    {assignment.title}
+                                </h3>
+                                <p className="text-sm text-surface-600 mb-4 max-w-3xl">
+                                    {assignment.description}
+                                </p>
+
+                                <div className="flex items-center gap-4 text-sm text-surface-500">
+                                    <div className="flex items-center gap-1.5">
+                                        <Calendar className="h-4 w-4" />
+                                        <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                                    </div>
+                                    {assignment.status === 'Pending' && (
+                                        <div className="flex items-center gap-1.5 text-orange-600">
+                                            <Clock className="h-4 w-4" />
+                                            <span>3 days left</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                                {assignment.title}
-                            </h3>
-                            <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3">
-                                {assignment.course}
-                            </p>
-                            <p className="text-sm text-surface-500 dark:text-surface-400 mb-6 line-clamp-2">
-                                {assignment.description}
-                            </p>
-
-                            <div className="flex items-center justify-between pt-4 border-t border-surface-100 dark:border-white/5">
-                                <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
-                                    <Calendar className="h-4 w-4" />
-                                    <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
-                                </div>
-
+                            <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 border-surface-100 pt-4 lg:pt-0">
                                 {assignment.status === 'Pending' ? (
-                                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/30">
+                                    <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary-900 text-white text-sm font-medium hover:bg-primary-800 transition-colors">
                                         <Upload className="h-4 w-4" />
-                                        Submit
+                                        Submit Work
                                     </button>
                                 ) : (
-                                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors dark:bg-surface-800 dark:text-surface-300">
-                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                    <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-50 text-surface-600 border border-surface-200 text-sm font-medium hover:bg-surface-100 transition-colors">
+                                        <CheckCircle className="h-4 w-4 text-green-600" />
                                         View Submission
                                     </button>
                                 )}

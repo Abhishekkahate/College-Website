@@ -50,16 +50,16 @@ const Schedule = () => {
         >
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold neon-text">Weekly Schedule</h1>
-                    <p className="text-surface-500 dark:text-surface-400">Manage your classes and labs</p>
+                    <h1 className="text-2xl font-bold text-surface-900">Weekly Schedule</h1>
+                    <p className="text-surface-500">Manage your classes and labs</p>
                 </div>
-                <div className="glass-panel px-4 py-2 flex items-center gap-2 text-primary-600 dark:text-primary-400 font-medium">
+                <div className="bg-white border border-surface-200 rounded-lg px-4 py-2 flex items-center gap-2 text-primary-700 font-medium shadow-sm">
                     <CalendarIcon className="h-5 w-5" />
                     {currentDay}
                 </div>
             </div>
 
-            <div className="glass-card overflow-hidden">
+            <div className="card-clean overflow-hidden bg-white">
                 <div className="overflow-x-auto">
                     <div className="min-w-[1000px] p-6">
                         {/* Header Row */}
@@ -68,7 +68,7 @@ const Schedule = () => {
                             {days.map(day => (
                                 <div key={day} className={clsx(
                                     "col-span-1 font-bold text-center uppercase text-xs tracking-wider py-2 rounded-lg",
-                                    day === currentDay ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30" : "text-surface-400"
+                                    day === currentDay ? "bg-primary-900 text-white shadow-sm" : "text-surface-400"
                                 )}>
                                     {day}
                                 </div>
@@ -80,7 +80,7 @@ const Schedule = () => {
                             {times.map((time) => (
                                 <div key={time} className="grid grid-cols-7 gap-4">
                                     {/* Time Column */}
-                                    <div className="col-span-1 text-sm font-medium text-surface-500 dark:text-surface-400 py-4">
+                                    <div className="col-span-1 text-sm font-medium text-surface-500 py-4">
                                         {time}
                                     </div>
 
@@ -92,7 +92,7 @@ const Schedule = () => {
                                         return (
                                             <div key={`${day}-${time}`} className="col-span-1 relative min-h-[80px]">
                                                 {isDayHoliday && time === '09:00 AM' ? (
-                                                    <div className="absolute inset-0 h-[600px] bg-surface-100/50 dark:bg-white/5 rounded-xl flex items-center justify-center border-2 border-dashed border-surface-200 dark:border-white/10 z-10">
+                                                    <div className="absolute inset-0 h-[600px] bg-surface-50 rounded-xl flex items-center justify-center border-2 border-dashed border-surface-200 z-10">
                                                         <span className="transform -rotate-90 text-surface-400 font-bold tracking-widest uppercase">Holiday</span>
                                                     </div>
                                                 ) : classItem ? (
@@ -100,30 +100,30 @@ const Schedule = () => {
                                                         initial={{ opacity: 0, scale: 0.9 }}
                                                         animate={{ opacity: 1, scale: 1 }}
                                                         className={clsx(
-                                                            "h-full p-3 rounded-xl border backdrop-blur-md transition-all hover:scale-105 cursor-pointer shadow-sm",
-                                                            classItem.color === 'primary' ? "bg-primary-500/10 border-primary-500/20 hover:bg-primary-500/20" :
-                                                                classItem.color === 'accent' ? "bg-accent-500/10 border-accent-500/20 hover:bg-accent-500/20" :
-                                                                    "bg-green-500/10 border-green-500/20 hover:bg-green-500/20"
+                                                            "h-full p-3 rounded-lg border transition-all hover:shadow-md cursor-pointer",
+                                                            classItem.color === 'primary' ? "bg-primary-50 border-primary-100 hover:border-primary-200" :
+                                                                classItem.color === 'accent' ? "bg-accent-50 border-accent-100 hover:border-accent-200" :
+                                                                    "bg-green-50 border-green-100 hover:border-green-200"
                                                         )}
                                                     >
                                                         <h4 className={clsx(
-                                                            "font-bold text-sm mb-1",
-                                                            classItem.color === 'primary' ? "text-primary-700 dark:text-primary-300" :
-                                                                classItem.color === 'accent' ? "text-accent-700 dark:text-accent-300" :
-                                                                    "text-green-700 dark:text-green-300"
+                                                            "font-semibold text-sm mb-1",
+                                                            classItem.color === 'primary' ? "text-primary-900" :
+                                                                classItem.color === 'accent' ? "text-accent-900" :
+                                                                    "text-green-900"
                                                         )}>
                                                             {classItem.name}
                                                         </h4>
-                                                        <div className="flex items-center gap-1 text-xs opacity-80">
+                                                        <div className="flex items-center gap-1 text-xs opacity-80 text-surface-600">
                                                             <MapPin className="h-3 w-3" />
                                                             <span>{classItem.room}</span>
                                                         </div>
-                                                        <div className="mt-2 text-xs font-medium px-2 py-0.5 rounded-full bg-white/50 dark:bg-black/20 w-fit">
+                                                        <div className="mt-2 text-xs font-medium px-2 py-0.5 rounded-md bg-white/60 w-fit border border-black/5">
                                                             {classItem.type}
                                                         </div>
                                                     </motion.div>
                                                 ) : (
-                                                    <div className="h-full rounded-xl border border-surface-100 dark:border-white/5 bg-surface-50/50 dark:bg-white/5 hover:bg-surface-100 dark:hover:bg-white/10 transition-colors" />
+                                                    <div className="h-full rounded-lg border border-dashed border-surface-100 bg-surface-50/30 hover:bg-surface-50 transition-colors" />
                                                 )}
                                             </div>
                                         );
