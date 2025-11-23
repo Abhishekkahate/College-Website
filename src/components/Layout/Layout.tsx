@@ -1,17 +1,19 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import PageTransition from './PageTransition';
 
 const Layout = () => {
     return (
-        <div className="min-h-screen bg-surface-50 font-sans">
+        <div className="min-h-screen bg-surface-50 dark:bg-surface-950 transition-colors duration-300">
             <Sidebar />
-            <div className="ml-72 flex min-h-screen flex-col transition-all duration-300">
+            <div className="pl-72 pr-4 min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 p-8">
-                    <div className="mx-auto max-w-7xl animate-fade-in">
+                <main className="flex-1 pb-8">
+                    <PageTransition>
                         <Outlet />
-                    </div>
+                    </PageTransition>
                 </main>
             </div>
         </div>

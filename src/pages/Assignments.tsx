@@ -1,107 +1,150 @@
-import { useData } from '../context/DataContext';
-import { CheckCircle, Clock, AlertCircle, Download, BookOpen } from 'lucide-react';
-import clsx from 'clsx';
+import React from 'react';
 import { motion } from 'framer-motion';
-import PageTransition from '../components/Layout/PageTransition';
+import { FileText, Calendar, CheckCircle, Clock, AlertCircle, Download, Upload } from 'lucide-react';
+import clsx from 'clsx';
 
 const Assignments = () => {
-    const { assignments } = useData();
-
-    // Group assignments by courseName
-    const groupedAssignments = assignments.reduce((acc, assignment) => {
-        if (!acc[assignment.courseName]) {
-            acc[assignment.courseName] = [];
+    // Mock assignments data
+    const assignments = [
+        {
+            id: 1,
+            title: 'Data Structures Implementation',
+            course: 'Data Structures',
+            dueDate: '2024-03-25',
+            status: 'Pending',
+            description: 'Implement AVL Tree and Red-Black Tree with insertion and deletion operations.',
+            priority: 'High'
+        },
+        {
+            id: 2,
+            title: 'Database Schema Design',
+            course: 'Database Systems',
+            dueDate: '2024-03-28',
+            status: 'Submitted',
+            description: 'Design a normalized database schema for a library management system.',
+            priority: 'Medium'
+        },
+        {
+            id: 3,
+            title: 'Linear Algebra Problem Set',
+            course: 'Linear Algebra',
+            dueDate: '2024-03-30',
+            status: 'Pending',
+            description: 'Solve problems 1-10 from Chapter 4 regarding vector spaces.',
+            priority: 'Medium'
+        },
+        {
+            id: 4,
+            title: 'Web Portfolio Project',
+            course: 'Web Development',
+            dueDate: '2024-04-05',
+            status: 'Pending',
+            description: 'Create a personal portfolio website using React and Tailwind CSS.',
+            priority: 'Low'
         }
-        acc[assignment.courseName].push(assignment);
-        return acc;
-    }, {} as Record<string, typeof assignments>);
+    ];
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'Submitted': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+            case 'Pending': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
+            case 'Overdue': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+            default: return 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-400';
+        }
+    };
+
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'High': return 'text-red-500';
+            case 'Medium': return 'text-orange-500';
+            case 'Low': return 'text-blue-500';
+            default: return 'text-gray-500';
+        }
+    };
 
     return (
-        <PageTransition>
-            <div className="space-y-8">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+        >
+            <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Assignments</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Track your upcoming deadlines and grades</p>
+                    <h1 className="text-3xl font-bold neon-text">Assignments</h1>
+                    <p className="text-surface-500 dark:text-surface-400">Track and submit your coursework</p>
                 </div>
-
-                <div className="space-y-8">
-                    {Object.entries(groupedAssignments).map(([courseName, courseAssignments], groupIndex) => (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: groupIndex * 0.1 }}
-                            key={courseName}
-                            className="space-y-4"
-                        >
-                            <div className="flex items-center gap-2">
-                                <div className="rounded-lg bg-primary-100 p-2 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
-                                    <BookOpen className="h-5 w-5" />
-                                </div>
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{courseName}</h2>
-                            </div>
-
-                            <div className="grid gap-4">
-                                {courseAssignments.map((assignment, index) => (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: (groupIndex * 0.1) + (index * 0.05) }}
-                                        key={assignment.id}
-                                        className="group flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md md:flex-row md:items-center md:justify-between dark:bg-surface-900 dark:border dark:border-white/10"
-                                    >
-                                        <div className="flex items-start gap-4">
-                                            <div className={clsx(
-                                                'flex h-12 w-12 items-center justify-center rounded-xl transition-colors',
-                                                assignment.status === 'Submitted' ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' :
-                                                    assignment.status === 'Pending' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400' :
-                                                        'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
-                                            )}>
-                                                {assignment.status === 'Submitted' ? <CheckCircle className="h-6 w-6" /> :
-                                                    assignment.status === 'Pending' ? <Clock className="h-6 w-6" /> :
-                                                        <AlertCircle className="h-6 w-6" />}
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{assignment.title}</h3>
-                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{assignment.description}</p>
-                                                <div className="mt-3 flex flex-wrap items-center gap-4">
-                                                    <div className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                                        <span className="uppercase">Due:</span>
-                                                        <span className="text-gray-900 dark:text-white">{new Date(assignment.dueDate).toLocaleDateString()}</span>
-                                                    </div>
-                                                    {assignment.grade && (
-                                                        <div className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                                            <span className="uppercase">Grade:</span>
-                                                            <span className="font-bold text-green-600 dark:text-green-400">{assignment.grade}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-4 border-t border-gray-100 pt-4 md:border-0 md:pt-0 dark:border-white/10">
-                                            <button
-                                                onClick={() => alert('Downloading questions PDF...')}
-                                                className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-600 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5"
-                                            >
-                                                <Download className="h-4 w-4" />
-                                                Questions PDF
-                                            </button>
-                                            <div className={clsx(
-                                                'rounded-full px-3 py-1 text-xs font-bold',
-                                                assignment.status === 'Submitted' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                                    'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                                            )}>
-                                                {assignment.status}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    ))}
+                <div className="flex gap-3">
+                    <div className="glass-panel px-4 py-2 flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
+                        <span className="text-sm font-medium text-surface-600 dark:text-surface-300">3 Pending</span>
+                    </div>
+                    <div className="glass-panel px-4 py-2 flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-green-500" />
+                        <span className="text-sm font-medium text-surface-600 dark:text-surface-300">1 Submitted</span>
+                    </div>
                 </div>
             </div>
-        </PageTransition>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {assignments.map((assignment, index) => (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        key={assignment.id}
+                        className="glass-card p-6 card-hover group relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <FileText className="h-24 w-24 transform rotate-12" />
+                        </div>
+
+                        <div className="relative z-10">
+                            <div className="flex justify-between items-start mb-4">
+                                <span className={clsx(
+                                    "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
+                                    getStatusColor(assignment.status)
+                                )}>
+                                    {assignment.status}
+                                </span>
+                                <div className="flex items-center gap-1 text-xs font-medium">
+                                    <AlertCircle className={clsx("h-3 w-3", getPriorityColor(assignment.priority))} />
+                                    <span className={clsx(getPriorityColor(assignment.priority))}>{assignment.priority} Priority</span>
+                                </div>
+                            </div>
+
+                            <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                {assignment.title}
+                            </h3>
+                            <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3">
+                                {assignment.course}
+                            </p>
+                            <p className="text-sm text-surface-500 dark:text-surface-400 mb-6 line-clamp-2">
+                                {assignment.description}
+                            </p>
+
+                            <div className="flex items-center justify-between pt-4 border-t border-surface-100 dark:border-white/5">
+                                <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
+                                    <Calendar className="h-4 w-4" />
+                                    <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                                </div>
+
+                                {assignment.status === 'Pending' ? (
+                                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/30">
+                                        <Upload className="h-4 w-4" />
+                                        Submit
+                                    </button>
+                                ) : (
+                                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-100 text-surface-600 text-sm font-medium hover:bg-surface-200 transition-colors dark:bg-surface-800 dark:text-surface-300">
+                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                        View Submission
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </motion.div>
     );
 };
 

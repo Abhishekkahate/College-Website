@@ -1,62 +1,141 @@
-import { Calendar, Clock, MapPin, BookOpen } from 'lucide-react';
-import { exams } from '../data/mockData';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, Clock, MapPin, AlertCircle, CheckCircle, BookOpen } from 'lucide-react';
+import clsx from 'clsx';
 
 const Exams = () => {
-    const handleViewSyllabus = (courseName: string) => {
-        alert(`Viewing syllabus for ${courseName}\n\n• Unit 1: Introduction\n• Unit 2: Advanced Topics\n• Unit 3: Case Studies`);
-    };
+    // Mock exams data
+    const exams = [
+        {
+            id: 1,
+            subject: 'Data Structures',
+            code: 'CS301',
+            date: '2024-04-10',
+            time: '10:00 AM - 01:00 PM',
+            room: 'Hall A',
+            type: 'Mid Term',
+            status: 'Upcoming',
+            syllabus: 'Units 1, 2, 3'
+        },
+        {
+            id: 2,
+            subject: 'Database Systems',
+            code: 'CS302',
+            date: '2024-04-12',
+            time: '02:00 PM - 05:00 PM',
+            room: 'Hall B',
+            type: 'Mid Term',
+            status: 'Upcoming',
+            syllabus: 'Units 1, 2'
+        },
+        {
+            id: 3,
+            subject: 'Linear Algebra',
+            code: 'MA301',
+            date: '2024-04-15',
+            time: '10:00 AM - 01:00 PM',
+            room: 'Hall C',
+            type: 'Mid Term',
+            status: 'Upcoming',
+            syllabus: 'All Units'
+        },
+        {
+            id: 4,
+            subject: 'Web Development',
+            code: 'CS303',
+            date: '2024-03-15',
+            time: '10:00 AM - 01:00 PM',
+            room: 'Lab 1',
+            type: 'Practical',
+            status: 'Completed',
+            syllabus: 'HTML, CSS, JS'
+        }
+    ];
 
     return (
-        <div className="space-y-6">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+        >
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Exam Timetable</h1>
+                <div>
+                    <h1 className="text-3xl font-bold neon-text">Exams</h1>
+                    <p className="text-surface-500 dark:text-surface-400">View your exam schedule and syllabus</p>
+                </div>
+                <div className="glass-panel px-4 py-2 flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-primary-500" />
+                    <span className="text-sm font-medium text-surface-600 dark:text-surface-300">Next Exam in 5 days</span>
+                </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {exams.map((exam) => (
-                    <div key={exam.id} className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-gray-200 hover:border-primary-500 transition-all hover:shadow-md dark:bg-surface-900 dark:border-white/10">
-                        <div className="absolute top-0 right-0 h-24 w-24 translate-x-8 translate-y--8 rounded-full bg-primary-50 transition-transform group-hover:scale-150 dark:bg-primary-900/20"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {exams.map((exam, index) => (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                        key={exam.id}
+                        className="group relative flex flex-col sm:flex-row overflow-hidden rounded-2xl bg-white shadow-sm dark:bg-surface-900 border border-surface-200 dark:border-white/10 hover:shadow-lg transition-all"
+                    >
+                        {/* Left Side - Date & Time */}
+                        <div className={clsx(
+                            "flex flex-col items-center justify-center p-6 sm:w-40 text-white relative overflow-hidden",
+                            exam.status === 'Completed' ? "bg-surface-500" : "bg-gradient-to-br from-primary-600 to-primary-800"
+                        )}>
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="text-3xl font-bold">{new Date(exam.date).getDate()}</div>
+                            <div className="text-sm font-medium uppercase tracking-wider opacity-90">{new Date(exam.date).toLocaleDateString('en-US', { month: 'short' })}</div>
+                            <div className="mt-2 text-xs opacity-75">{new Date(exam.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
 
-                        <div className="relative">
-                            <div className="mb-4 flex items-start justify-between">
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{exam.courseName}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{exam.courseId}</p>
+                            {exam.status === 'Completed' && (
+                                <div className="mt-3 px-2 py-1 rounded bg-black/20 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                                    <CheckCircle className="h-3 w-3" /> Done
                                 </div>
-                                <div className="rounded-lg bg-primary-100 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
-                                    {exam.duration}
+                            )}
+                        </div>
+
+                        {/* Right Side - Details */}
+                        <div className="flex-1 p-6 flex flex-col justify-between relative">
+                            {/* Dashed Line Separator */}
+                            <div className="absolute left-0 top-4 bottom-4 w-[1px] border-l-2 border-dashed border-surface-200 dark:border-white/10 hidden sm:block"></div>
+                            <div className="absolute -left-3 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-surface-50 dark:bg-surface-950 hidden sm:block"></div>
+
+                            <div>
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                            {exam.subject}
+                                        </h3>
+                                        <p className="text-sm text-primary-600 dark:text-primary-400 font-medium">{exam.code} • {exam.type}</p>
+                                    </div>
+                                    <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400">
+                                        <BookOpen className="h-5 w-5" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 mt-4">
+                                    <div className="flex items-center gap-3 text-sm text-surface-600 dark:text-surface-300">
+                                        <Clock className="h-4 w-4 text-primary-500" />
+                                        <span>{exam.time}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm text-surface-600 dark:text-surface-300">
+                                        <MapPin className="h-4 w-4 text-primary-500" />
+                                        <span>{exam.room}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <Calendar className="h-4 w-4 text-gray-400" />
-                                    <span>{new Date(exam.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <Clock className="h-4 w-4 text-gray-400" />
-                                    <span>{exam.time}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <MapPin className="h-4 w-4 text-gray-400" />
-                                    <span>{exam.room}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-6">
-                                <button
-                                    onClick={() => handleViewSyllabus(exam.courseName)}
-                                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors dark:bg-surface-800 dark:border-white/10 dark:text-gray-300 dark:hover:bg-surface-700 dark:hover:text-white"
-                                >
-                                    <BookOpen className="h-4 w-4" />
-                                    View Syllabus
-                                </button>
+                            <div className="mt-4 pt-4 border-t border-surface-100 dark:border-white/5">
+                                <p className="text-xs text-surface-500 dark:text-surface-400">
+                                    <span className="font-semibold text-surface-700 dark:text-surface-200">Syllabus:</span> {exam.syllabus}
+                                </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     );
 };
 
