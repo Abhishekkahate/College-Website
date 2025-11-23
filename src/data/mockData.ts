@@ -114,6 +114,7 @@ export const notes: Note[] = [
         url: '#',
         type: 'PDF',
         size: '2.4 MB',
+        unit: 'Unit 1',
     },
     {
         id: 'n2',
@@ -125,6 +126,7 @@ export const notes: Note[] = [
         url: '#',
         type: 'PDF',
         size: '1.1 MB',
+        unit: 'Unit 2',
     },
     {
         id: 'n3',
@@ -136,6 +138,7 @@ export const notes: Note[] = [
         url: '#',
         type: 'DOCX',
         size: '500 KB',
+        unit: 'Unit 1',
     },
 ];
 

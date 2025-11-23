@@ -63,6 +63,7 @@ export interface Note {
     url: string; // Mock URL
     type: 'PDF' | 'DOCX' | 'IMG';
     size: string;
+    unit?: string;
 }
 
 export interface Notification {
