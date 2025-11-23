@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Upload, Search, X, File, Folder, ChevronRight, ArrowLeft } from 'lucide-react';
+import { FileText, Download, Upload, X, Folder, ChevronRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import type { Note } from '../types';
@@ -16,7 +16,7 @@ const Notes = () => {
         title: '',
         courseId: '',
         unit: '',
-        file_url: '',
+        url: '',
         type: 'PDF'
     });
 
@@ -49,7 +49,7 @@ const Notes = () => {
         } as Note);
 
         setIsUploadModalOpen(false);
-        setNewNote({ title: '', courseId: '', unit: '', file_url: '', type: 'PDF' });
+        setNewNote({ title: '', courseId: '', unit: '', url: '', type: 'PDF' });
     };
 
     return (

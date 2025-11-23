@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Calendar, CheckCircle, Clock, AlertCircle, Download, Upload } from 'lucide-react';
+import { FileText, Calendar, CheckCircle, AlertCircle, Upload } from 'lucide-react';
 import clsx from 'clsx';
 
 const Assignments = () => {

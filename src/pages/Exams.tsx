@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, AlertCircle, CheckCircle, BookOpen } from 'lucide-react';
+import { Clock, MapPin, AlertCircle, CheckCircle, BookOpen } from 'lucide-react';
 import clsx from 'clsx';
 
 const Exams = () => {
