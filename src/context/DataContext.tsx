@@ -7,7 +7,8 @@ import type {
     Event,
     LostItem,
     Notice,
-    Faculty
+    Faculty,
+    Note
 } from '../types';
 import * as dbService from '../services/database.service';
 import { useAuth } from './AuthContext';
@@ -20,6 +21,7 @@ interface DataContextType {
     lostItems: LostItem[];
     notices: Notice[];
     faculty: Faculty[];
+    notes: Note[];
     isLoading: boolean;
     refreshData: () => Promise<void>;
 
@@ -46,6 +48,9 @@ interface DataContextType {
 
     addNotice: (notice: Notice) => Promise<void>;
     deleteNotice: (id: string) => Promise<void>;
+
+    addNote: (note: Note) => Promise<void>;
+    deleteNote: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -59,6 +64,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [lostItems, setLostItems] = useState<LostItem[]>([]);
     const [notices, setNotices] = useState<Notice[]>([]);
     const [faculty, setFaculty] = useState<Faculty[]>([]);
+    const [notes, setNotes] = useState<Note[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Get user's section for filtering
@@ -75,7 +81,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 eventsData,
                 lostItemsData,
                 noticesData,
-                facultyData
+                facultyData,
+                notesData
             ] = await Promise.all([
                 dbService.fetchCourses(userSection),
                 dbService.fetchExams(userSection),
@@ -83,7 +90,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 dbService.fetchEvents(),
                 dbService.fetchLostItems(),
                 dbService.fetchNotices(),
-                dbService.fetchFaculty()
+                dbService.fetchFaculty(),
+                dbService.fetchNotes(userSection)
             ]);
 
             setCourses(coursesData);
@@ -93,6 +101,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setLostItems(lostItemsData);
             setNotices(noticesData);
             setFaculty(facultyData);
+            setNotes(notesData);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -207,6 +216,21 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         await refreshData();
     };
 
+    // Note Actions
+    const addNote = async (note: Note) => {
+        if (!user) return;
+        await dbService.createNote({
+            ...note,
+            authorId: user.id,
+            section: userSection || 'A'
+        });
+        await refreshData();
+    };
+    const deleteNote = async (id: string) => {
+        await dbService.deleteNote(id);
+        await refreshData();
+    };
+
     return (
         <DataContext.Provider value={{
             courses,
@@ -216,6 +240,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             lostItems,
             notices,
             faculty,
+            notes,
             isLoading,
             refreshData,
             addCourse,
@@ -234,7 +259,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             updateLostItem,
             deleteLostItem,
             addNotice,
-            deleteNotice
+            deleteNotice,
+            addNote,
+            deleteNote
         }}>
             {children}
         </DataContext.Provider>

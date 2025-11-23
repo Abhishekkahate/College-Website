@@ -539,7 +539,10 @@ export async function fetchFaculty() {
 // =============================================
 
 export async function fetchNotes(section?: string) {
-    const query = supabase.from('notes').select('*').order('created_at', { ascending: false });
+    const query = supabase.from('notes').select(`
+        *,
+        course:courses(name)
+    `).order('created_at', { ascending: false });
 
     if (section) {
         query.eq('section', section);
@@ -556,12 +559,13 @@ export async function fetchNotes(section?: string) {
         id: note.id,
         title: note.title,
         courseId: note.course_id,
-        courseName: '', // Will be populated from courses
+        courseName: note.course?.name || 'Unknown Course',
         author: note.author_name,
         date: note.created_at.split('T')[0],
         url: note.file_url,
         type: note.file_type,
-        size: note.file_size
+        size: note.file_size,
+        unit: note.unit
     })) as Note[];
 }
 
@@ -576,7 +580,8 @@ export async function createNote(note: Omit<Note, 'id' | 'date' | 'courseName'> 
             file_url: note.url,
             file_type: note.type,
             file_size: note.size,
-            section: note.section
+            section: note.section,
+            unit: note.unit
         })
         .select()
         .single();
@@ -587,6 +592,15 @@ export async function createNote(note: Omit<Note, 'id' | 'date' | 'courseName'> 
     }
 
     return data.id;
+}
+
+export async function deleteNote(id: string) {
+    const { error } = await supabase.from('notes').delete().eq('id', id);
+
+    if (error) {
+        console.error('Error deleting note:', error);
+        throw new Error(error.message);
+    }
 }
 
 // =============================================

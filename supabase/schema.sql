@@ -102,6 +102,7 @@ CREATE TABLE notes (
     file_type TEXT NOT NULL CHECK (file_type IN ('PDF', 'DOCX', 'IMG')),
     file_size TEXT NOT NULL,
     section TEXT NOT NULL,
+    unit TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
