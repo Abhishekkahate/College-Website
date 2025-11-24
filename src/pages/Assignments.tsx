@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FileText, Calendar, CheckCircle, AlertCircle, Upload, Clock } from 'lucide-react';
+import { FileText, Calendar, CheckCircle, Upload, Clock } from 'lucide-react';
 import clsx from 'clsx';
 import { useData } from '../context/DataContext';
 
