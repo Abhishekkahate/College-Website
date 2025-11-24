@@ -1,55 +1,10 @@
 import { motion } from 'framer-motion';
 import { Clock, MapPin, AlertCircle, CheckCircle, BookOpen } from 'lucide-react';
 import clsx from 'clsx';
+import { useData } from '../context/DataContext';
 
 const Exams = () => {
-    // Mock exams data
-    const exams = [
-        {
-            id: 1,
-            subject: 'Data Structures',
-            code: 'CS301',
-            date: '2024-04-10',
-            time: '10:00 AM - 01:00 PM',
-            room: 'Hall A',
-            type: 'Mid Term',
-            status: 'Upcoming',
-            syllabus: 'Units 1, 2, 3'
-        },
-        {
-            id: 2,
-            subject: 'Database Systems',
-            code: 'CS302',
-            date: '2024-04-12',
-            time: '02:00 PM - 05:00 PM',
-            room: 'Hall B',
-            type: 'Mid Term',
-            status: 'Upcoming',
-            syllabus: 'Units 1, 2'
-        },
-        {
-            id: 3,
-            subject: 'Linear Algebra',
-            code: 'MA301',
-            date: '2024-04-15',
-            time: '10:00 AM - 01:00 PM',
-            room: 'Hall C',
-            type: 'Mid Term',
-            status: 'Upcoming',
-            syllabus: 'All Units'
-        },
-        {
-            id: 4,
-            subject: 'Web Development',
-            code: 'CS303',
-            date: '2024-03-15',
-            time: '10:00 AM - 01:00 PM',
-            room: 'Lab 1',
-            type: 'Practical',
-            status: 'Completed',
-            syllabus: 'HTML, CSS, JS'
-        }
-    ];
+    const { exams } = useData();
 
     return (
         <motion.div
@@ -80,13 +35,13 @@ const Exams = () => {
                         {/* Left Side - Date & Time */}
                         <div className={clsx(
                             "flex flex-col items-center justify-center p-6 sm:w-40 text-white relative overflow-hidden",
-                            exam.status === 'Completed' ? "bg-surface-500" : "bg-primary-900"
+                            new Date(exam.date) < new Date() ? "bg-surface-500" : "bg-primary-900"
                         )}>
                             <div className="text-3xl font-bold">{new Date(exam.date).getDate()}</div>
                             <div className="text-sm font-medium uppercase tracking-wider opacity-90">{new Date(exam.date).toLocaleDateString('en-US', { month: 'short' })}</div>
                             <div className="mt-2 text-xs opacity-75">{new Date(exam.date).toLocaleDateString('en-US', { weekday: 'short' })}</div>
 
-                            {exam.status === 'Completed' && (
+                            {new Date(exam.date) < new Date() && (
                                 <div className="mt-3 px-2 py-1 rounded bg-black/20 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                                     <CheckCircle className="h-3 w-3" /> Done
                                 </div>
@@ -103,9 +58,9 @@ const Exams = () => {
                                 <div className="flex justify-between items-start mb-2">
                                     <div>
                                         <h3 className="text-lg font-bold text-surface-900 group-hover:text-primary-700 transition-colors">
-                                            {exam.subject}
+                                            {exam.courseName}
                                         </h3>
-                                        <p className="text-sm text-primary-600 font-medium">{exam.code} • {exam.type}</p>
+                                        <p className="text-sm text-primary-600 font-medium">{exam.courseName} • {exam.duration} mins</p>
                                     </div>
                                     <div className="p-2 rounded-lg bg-surface-100 text-surface-500">
                                         <BookOpen className="h-5 w-5" />
@@ -126,7 +81,7 @@ const Exams = () => {
 
                             <div className="mt-4 pt-4 border-t border-surface-100">
                                 <p className="text-xs text-surface-500">
-                                    <span className="font-semibold text-surface-700">Syllabus:</span> {exam.syllabus}
+                                    <span className="font-semibold text-surface-700">Syllabus:</span> Check course details
                                 </p>
                             </div>
                         </div>

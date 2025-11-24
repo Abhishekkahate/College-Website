@@ -1,35 +1,32 @@
 import { motion } from 'framer-motion';
 import { Calendar as CalendarIcon, MapPin } from 'lucide-react';
 import clsx from 'clsx';
+import { useData } from '../context/DataContext';
 
 const Schedule = () => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const times = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'];
 
-    // Mock schedule data
-    const scheduleData: Record<string, any[]> = {
-        Monday: [
-            { id: 1, name: 'Data Structures', time: '10:00 AM', duration: 1, room: '301', type: 'Lecture', color: 'primary' },
-            { id: 2, name: 'Database Lab', time: '02:00 PM', duration: 2, room: 'Lab 2', type: 'Lab', color: 'accent' },
-        ],
-        Tuesday: [
-            { id: 3, name: 'Linear Algebra', time: '09:00 AM', duration: 1, room: '204', type: 'Lecture', color: 'primary' },
-            { id: 4, name: 'Web Development', time: '11:00 AM', duration: 1, room: 'Lab 1', type: 'Lab', color: 'accent' },
-        ],
-        Wednesday: [
-            { id: 5, name: 'Data Structures', time: '10:00 AM', duration: 1, room: '301', type: 'Lecture', color: 'primary' },
-            { id: 6, name: 'Database Systems', time: '01:00 PM', duration: 1, room: '205', type: 'Lecture', color: 'primary' },
-        ],
-        Thursday: [
-            { id: 7, name: 'Linear Algebra', time: '09:00 AM', duration: 1, room: '204', type: 'Lecture', color: 'primary' },
-            { id: 8, name: 'Web Development', time: '11:00 AM', duration: 1, room: 'Lab 1', type: 'Lab', color: 'accent' },
-        ],
-        Friday: [
-            { id: 9, name: 'Database Systems', time: '10:00 AM', duration: 1, room: '205', type: 'Lecture', color: 'primary' },
-            { id: 10, name: 'Soft Skills', time: '02:00 PM', duration: 1, room: 'Sem Hall', type: 'Workshop', color: 'green' },
-        ],
-        Saturday: []
-    };
+    const { courses } = useData();
+
+    // Derive schedule from courses
+    const scheduleData: Record<string, any[]> = {};
+
+    days.forEach(day => {
+        scheduleData[day] = courses.flatMap((course: any) =>
+            course.schedule
+                .filter((s: any) => s.day === day)
+                .map((s: any) => ({
+                    id: `${course.id}-${s.day}-${s.time}`,
+                    name: course.name,
+                    time: s.time,
+                    duration: 1, // Default to 1 hour as schema doesn't have duration yet
+                    room: s.room,
+                    type: 'Lecture', // Default type
+                    color: 'primary' // Default color
+                }))
+        ).sort((a: any, b: any) => a.time.localeCompare(b.time));
+    });
 
     const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 

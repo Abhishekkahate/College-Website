@@ -1,47 +1,10 @@
 import { motion } from 'framer-motion';
 import { FileText, Calendar, CheckCircle, AlertCircle, Upload, Clock } from 'lucide-react';
 import clsx from 'clsx';
+import { useData } from '../context/DataContext';
 
 const Assignments = () => {
-    // Mock assignments data
-    const assignments = [
-        {
-            id: 1,
-            title: 'Data Structures Implementation',
-            course: 'Data Structures',
-            dueDate: '2024-03-25',
-            status: 'Pending',
-            description: 'Implement AVL Tree and Red-Black Tree with insertion and deletion operations.',
-            priority: 'High'
-        },
-        {
-            id: 2,
-            title: 'Database Schema Design',
-            course: 'Database Systems',
-            dueDate: '2024-03-28',
-            status: 'Submitted',
-            description: 'Design a normalized database schema for a library management system.',
-            priority: 'Medium'
-        },
-        {
-            id: 3,
-            title: 'Linear Algebra Problem Set',
-            course: 'Linear Algebra',
-            dueDate: '2024-03-30',
-            status: 'Pending',
-            description: 'Solve problems 1-10 from Chapter 4 regarding vector spaces.',
-            priority: 'Medium'
-        },
-        {
-            id: 4,
-            title: 'Web Portfolio Project',
-            course: 'Web Development',
-            dueDate: '2024-04-05',
-            status: 'Pending',
-            description: 'Create a personal portfolio website using React and Tailwind CSS.',
-            priority: 'Low'
-        }
-    ];
+    const { assignments } = useData();
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -52,14 +15,6 @@ const Assignments = () => {
         }
     };
 
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'High': return 'text-red-600 bg-red-50 border-red-100';
-            case 'Medium': return 'text-orange-600 bg-orange-50 border-orange-100';
-            case 'Low': return 'text-blue-600 bg-blue-50 border-blue-100';
-            default: return 'text-surface-600 bg-surface-50 border-surface-100';
-        }
-    };
 
     return (
         <motion.div
@@ -102,16 +57,9 @@ const Assignments = () => {
                                     )}>
                                         {assignment.status}
                                     </span>
-                                    <span className={clsx(
-                                        "px-2.5 py-0.5 rounded-full text-xs font-medium border flex items-center gap-1",
-                                        getPriorityColor(assignment.priority)
-                                    )}>
-                                        <AlertCircle className="h-3 w-3" />
-                                        {assignment.priority} Priority
-                                    </span>
                                     <span className="text-xs font-medium text-surface-400 flex items-center gap-1">
                                         <FileText className="h-3 w-3" />
-                                        {assignment.course}
+                                        {assignment.courseName}
                                     </span>
                                 </div>
 
