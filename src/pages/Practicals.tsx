@@ -5,9 +5,7 @@ import {
     Clock,
     MapPin,
     Users,
-    Plus,
-    Search,
-    User
+    Plus
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
