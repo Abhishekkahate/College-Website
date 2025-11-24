@@ -16,14 +16,26 @@ const Dashboard = () => {
     const {
         notices,
         notes,
-        exams
+        exams,
+        courses
     } = useData();
 
-    // Mock upcoming classes
-    const upcomingClasses = [
-        { id: 1, name: 'Data Structures', time: '10:00 AM', room: '301', type: 'Lecture' },
-        { id: 2, name: 'Database Systems', time: '11:30 AM', room: 'Lab 2', type: 'Lab' },
-    ];
+    // Get today's day name
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const today = days[new Date().getDay()];
+
+    // Derive upcoming classes from courses
+    const upcomingClasses = courses.flatMap(course =>
+        course.schedule
+            .filter(s => s.day === today)
+            .map(s => ({
+                id: `${course.id}-${s.day}-${s.time}`,
+                name: course.name,
+                time: s.time,
+                room: s.room,
+                type: 'Lecture' // Assuming lecture for now, could be added to schema
+            }))
+    ).sort((a, b) => a.time.localeCompare(b.time));
 
     const container = {
         hidden: { opacity: 0 },

@@ -7,7 +7,9 @@ import type {
     LostItem,
     Notice,
     Faculty,
-    Note
+    Note,
+    Folder,
+    Practical
 } from '../types';
 
 // =============================================
@@ -538,14 +540,22 @@ export async function fetchFaculty() {
 // NOTES
 // =============================================
 
-export async function fetchNotes(section?: string) {
-    const query = supabase.from('notes').select(`
+export async function fetchNotes(section?: string, folderId?: string | null) {
+    let query = supabase.from('notes').select(`
         *,
         course:courses(name)
     `).order('created_at', { ascending: false });
 
     if (section) {
-        query.eq('section', section);
+        query = query.eq('section', section);
+    }
+
+    if (folderId !== undefined) {
+        if (folderId === null) {
+            query = query.is('folder_id', null);
+        } else {
+            query = query.eq('folder_id', folderId);
+        }
     }
 
     const { data, error } = await query;
@@ -565,7 +575,8 @@ export async function fetchNotes(section?: string) {
         url: note.file_url,
         type: note.file_type,
         size: note.file_size,
-        unit: note.unit
+        unit: note.unit,
+        folderId: note.folder_id
     })) as Note[];
 }
 
@@ -581,7 +592,8 @@ export async function createNote(note: Omit<Note, 'id' | 'date' | 'courseName'> 
             file_type: note.type,
             file_size: note.size,
             section: note.section,
-            unit: note.unit
+            unit: note.unit,
+            folder_id: note.folderId
         })
         .select()
         .single();
@@ -619,4 +631,127 @@ export function subscribeToLostItems(callback: (payload: any) => void) {
         .channel('lost-items-changes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'lost_items' }, callback)
         .subscribe();
+}
+
+// =============================================
+// FOLDERS
+// =============================================
+
+export async function fetchFolders(parentId: string | null = null, courseId?: string) {
+    let query = supabase
+        .from('folders')
+        .select('*')
+        .order('name', { ascending: true });
+
+    if (parentId === null) {
+        query = query.is('parent_id', null);
+    } else {
+        query = query.eq('parent_id', parentId);
+    }
+
+    if (courseId) {
+        query = query.eq('course_id', courseId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        console.error('Error fetching folders:', error);
+        return [];
+    }
+
+    return data.map(folder => ({
+        id: folder.id,
+        name: folder.name,
+        parentId: folder.parent_id,
+        courseId: folder.course_id,
+        createdAt: folder.created_at
+    })) as Folder[];
+}
+
+export async function createFolder(folder: { name: string; parentId?: string | null; courseId?: string }) {
+    const { data, error } = await supabase
+        .from('folders')
+        .insert({
+            name: folder.name,
+            parent_id: folder.parentId,
+            course_id: folder.courseId
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating folder:', error);
+        throw new Error(error.message);
+    }
+
+    return data.id;
+}
+
+// =============================================
+// PRACTICALS
+// =============================================
+
+export async function fetchPracticals(group?: string) {
+    let query = supabase
+        .from('practicals')
+        .select('*')
+        .order('date', { ascending: true });
+
+    if (group) {
+        query = query.eq('group_id', group);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        console.error('Error fetching practicals:', error);
+        return [];
+    }
+
+    return data.map(practical => ({
+        id: practical.id,
+        subject: practical.subject,
+        title: practical.title,
+        group: practical.group_id,
+        date: practical.date,
+        time: practical.time,
+        room: practical.room
+    })) as Practical[];
+}
+
+export async function createPractical(practical: Omit<Practical, 'id'>) {
+    const { data, error } = await supabase
+        .from('practicals')
+        .insert({
+            subject: practical.subject,
+            title: practical.title,
+            group_id: practical.group,
+            date: practical.date,
+            time: practical.time,
+            room: practical.room
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating practical:', error);
+        throw new Error(error.message);
+    }
+
+    return data.id;
+}
+
+export async function updateUserPracticalGroup(userId: string, group: string) {
+    // Assuming user data is in a 'profiles' table or similar, or updating metadata
+    // For this implementation, we'll assume a 'profiles' table as per schema
+    const { error } = await supabase
+        .from('profiles')
+        .update({ practical_group: group })
+        .eq('id', userId);
+
+    if (error) {
+        console.error('Error updating practical group:', error);
+        throw new Error(error.message);
+    }
 }

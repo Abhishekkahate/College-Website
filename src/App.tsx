@@ -14,6 +14,7 @@ import Notes from './pages/Notes';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
+import Practicals from './pages/Practicals';
 
 const ProtectedRoute = () => {
   const { isAuthenticated, user } = useAuth();
@@ -50,6 +51,7 @@ function App() {
                   <Route path="lost-found" element={<LostFound />} />
                   <Route path="exams" element={<Exams />} />
                   <Route path="notes" element={<Notes />} />
+                  <Route path="practicals" element={<Practicals />} />
                   <Route path="profile" element={<Profile />} />
                 </Route>
               </Route>

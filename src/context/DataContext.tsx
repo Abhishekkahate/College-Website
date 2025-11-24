@@ -8,7 +8,10 @@ import type {
     LostItem,
     Notice,
     Faculty,
-    Note
+    Note,
+    Folder,
+    Practical,
+    Student
 } from '../types';
 import * as dbService from '../services/database.service';
 import { useAuth } from './AuthContext';
@@ -22,6 +25,8 @@ interface DataContextType {
     notices: Notice[];
     faculty: Faculty[];
     notes: Note[];
+    folders: Folder[];
+    practicals: Practical[];
     isLoading: boolean;
     refreshData: () => Promise<void>;
 
@@ -51,6 +56,15 @@ interface DataContextType {
 
     addNote: (note: Note) => Promise<void>;
     deleteNote: (id: string) => Promise<void>;
+    fetchNotesForFolder: (folderId: string | null) => Promise<void>;
+
+    // Folder Actions
+    fetchFoldersForParent: (parentId: string | null) => Promise<void>;
+    addFolder: (name: string, parentId: string | null, courseId?: string) => Promise<void>;
+
+    // Practical Actions
+    addPractical: (practical: Practical) => Promise<void>;
+    updateUserGroup: (userId: string, group: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -65,10 +79,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [notices, setNotices] = useState<Notice[]>([]);
     const [faculty, setFaculty] = useState<Faculty[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
+    const [folders, setFolders] = useState<Folder[]>([]);
+    const [practicals, setPracticals] = useState<Practical[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Get user's section for filtering
     const userSection = user?.role === 'student' ? user.section : undefined;
+    const userPracticalGroup = (user?.role === 'student') ? (user as Student).practicalGroup : undefined;
 
     // Fetch all data
     const refreshData = async () => {
@@ -82,7 +99,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 lostItemsData,
                 noticesData,
                 facultyData,
-                notesData
+                notesData,
+                foldersData,
+                practicalsData
             ] = await Promise.all([
                 dbService.fetchCourses(userSection),
                 dbService.fetchExams(userSection),
@@ -91,7 +110,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 dbService.fetchLostItems(),
                 dbService.fetchNotices(),
                 dbService.fetchFaculty(),
-                dbService.fetchNotes(userSection)
+                dbService.fetchNotes(userSection),
+                dbService.fetchFolders(null), // Fetch root folders initially
+                dbService.fetchPracticals(userPracticalGroup)
             ]);
 
             setCourses(coursesData);
@@ -102,6 +123,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setNotices(noticesData);
             setFaculty(facultyData);
             setNotes(notesData);
+            setFolders(foldersData);
+            setPracticals(practicalsData);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -231,6 +254,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         await refreshData();
     };
 
+    const fetchNotesForFolder = async (folderId: string | null) => {
+        const notesData = await dbService.fetchNotes(userSection, folderId);
+        setNotes(notesData);
+    };
+
+    // Folder Actions
+    const fetchFoldersForParent = async (parentId: string | null) => {
+        const foldersData = await dbService.fetchFolders(parentId);
+        setFolders(foldersData);
+    };
+
+    const addFolder = async (name: string, parentId: string | null, courseId?: string) => {
+        await dbService.createFolder({ name, parentId, courseId });
+        await fetchFoldersForParent(parentId);
+    };
+
+    // Practical Actions
+    const addPractical = async (practical: Practical) => {
+        await dbService.createPractical(practical);
+        const practicalsData = await dbService.fetchPracticals(userPracticalGroup);
+        setPracticals(practicalsData);
+    };
+
+    const updateUserGroup = async (userId: string, group: string) => {
+        await dbService.updateUserPracticalGroup(userId, group);
+    };
+
     return (
         <DataContext.Provider value={{
             courses,
@@ -241,6 +291,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             notices,
             faculty,
             notes,
+            folders,
+            practicals,
             isLoading,
             refreshData,
             addCourse,
@@ -261,7 +313,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             addNotice,
             deleteNotice,
             addNote,
-            deleteNote
+            deleteNote,
+            fetchNotesForFolder,
+            fetchFoldersForParent,
+            addFolder,
+            addPractical,
+            updateUserGroup
         }}>
             {children}
         </DataContext.Provider>

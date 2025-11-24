@@ -9,6 +9,7 @@ export interface Student {
     section: string;
     password?: string; // Optional for security in frontend, but needed for mock login
     role: 'student';
+    practicalGroup?: 'J1' | 'J2' | 'J3';
 }
 
 export interface Admin {
@@ -64,6 +65,7 @@ export interface Note {
     type: 'PDF' | 'DOCX' | 'IMG';
     size: string;
     unit?: string;
+    folderId?: string | null;
 }
 
 export interface Notification {
@@ -115,4 +117,22 @@ export interface LostItem {
     contact: string;
     image: string;
     status: 'Lost' | 'Found';
+}
+
+export interface Folder {
+    id: string;
+    name: string;
+    parentId: string | null;
+    courseId: string | null;
+    createdAt: string;
+}
+
+export interface Practical {
+    id: string;
+    subject: string;
+    title: string;
+    group: 'J1' | 'J2' | 'J3';
+    date: string;
+    time: string;
+    room: string;
 }

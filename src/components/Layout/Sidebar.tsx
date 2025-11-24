@@ -9,7 +9,8 @@ import {
     User,
     Settings,
     HelpCircle,
-    X
+    X,
+    Beaker
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,6 +36,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         { icon: BookOpen, label: 'Assignments', path: '/assignments' },
         { icon: GraduationCap, label: 'Exams', path: '/exams' },
         { icon: FileText, label: 'Notes', path: '/notes' },
+        { icon: Beaker, label: 'Practicals', path: '/practicals' },
     ];
 
     const bottomNavItems = [

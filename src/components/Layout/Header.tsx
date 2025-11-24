@@ -1,4 +1,4 @@
-import { Bell, Search, Menu } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -16,12 +16,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
                 </button>
 
                 <div className="relative w-full max-w-md hidden md:block">
-                    <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-surface-400" />
-                    <input
-                        type="text"
-                        placeholder="Search for anything..."
-                        className="h-10 w-full rounded-lg bg-white border border-surface-200 pl-10 pr-4 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                    />
+                    {/* Search bar removed as per request */}
                 </div>
             </div>
 
